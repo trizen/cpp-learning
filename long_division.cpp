@@ -48,14 +48,11 @@ void _divide(int &x, int &y, int &f, int &c, string &z) {
     while (y > x) {
         x *= 10;
         s++;
-
         if (x == 0) break;
     }
 
     if (c == 0) z += ".";
-
     if (s > 0)  z += string(s, '0');
-
     if ((c += s + 1) <= f)
         _divide(x, y, f, c, z);
 }
