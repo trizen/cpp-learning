@@ -1,8 +1,6 @@
 // Openbox file browser, in C++
 
 /*
-
-    openbox-pipefs
     Recursively browse filesystem through openbox3 pipe menus
 
     Author: Daniel "Trizen" Șuteu
@@ -11,20 +9,19 @@
     http://trizenx.blogspot.com
 
     Compilation:
-    g++ -std=c++11 -march=native -Ofast openbox-pipefs.cpp -o openbox-pipefs
+        g++ -std=c++11 -march=native -Ofast openbox-pipefs.cpp -o openbox-pipefs
 
     ---------------------------------------------------
     Add a new entry in your menu.xml:
-    <menu id="openbox-pipefs" label="Disk" execute="openbox-pipefs ."/>
+        <menu id="openbox-pipefs" label="Disk" execute="openbox-pipefs ."/>
     ---------------------------------------------------
 
     ---------------------------------------------------
     If you are using the 'obmenu-generator' program, add in schema.pl:
-    {pipe => ["openbox-pipefs .", "Disk", "drive-harddisk"]},
+        {pipe => ["openbox-pipefs .", "Disk", "drive-harddisk"]},
     ---------------------------------------------------
 
     See also: http://trizenx.blogspot.ro/2012/12/obbrowser.html
-
 */
 
 #include <iostream>

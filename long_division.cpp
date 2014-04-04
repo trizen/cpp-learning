@@ -1,5 +1,4 @@
 /*
-
     Copyright 2014 Daniel "Trizen" Șuteu <trizenx@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -16,7 +15,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301, USA.
-
 */
 
 /*
@@ -26,10 +24,10 @@
     http://trizenx.blogspot.com
 
     Compilation:
-     g++ -std=c++11 -march=native -Ofast long_division.cpp -o long_division
+        g++ -std=c++11 -march=native -Ofast long_division.cpp -o long_division
 
     Usage:
-     ./long_division 429429 4512512 2344
+        ./long_division 429429 4512512 2344
 */
 
 #include <iostream>

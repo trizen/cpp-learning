@@ -1,5 +1,4 @@
 /*
-
     Copyright 2014 Daniel "Trizen" Șuteu <trizenx@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
@@ -16,7 +15,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
     MA 02110-1301, USA.
-
 */
 
 /*
@@ -26,10 +24,10 @@
     http://trizenx.blogspot.com
 
     Compilation:
-     g++ -std=c++11 -march=native -Ofast fsfn.cpp -o fsfn
+        g++ -std=c++11 -march=native -Ofast fsfn.cpp -o fsfn
 
     Usage:
-     ./fsfn [dir]
+        ./fsfn [dir]
 */
 
 #define _OPEN_SYS
@@ -98,7 +96,7 @@ void traverse(const char *fn, vector <array <string, 2>> *collection, string(*ca
 
     DIR *dir;
     struct dirent *entry;
-    char path[4097];
+    char path[4096];
     struct stat info;
 
     string path_str(fn);
