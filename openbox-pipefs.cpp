@@ -27,33 +27,28 @@
 #include <iostream>
 #include <dirent.h>
 #include <sys/stat.h>
-#include <string.h>
-#include <vector>
+#include <algorithm>
 
 using namespace std;
 
-// Command to lauch files with
-#define CMD "pcmanfm"
+#define CMD "pcmanfm"   // Command to lauch files with
+#define QUOT  "&#34;"   // XML escaped quote
 
-// HTML/XML encoded quote
-#define QUOT  "&quot;"
-#define EQUOT "\\&quot;"
-
-string encode(string data) {
+string xmlEscape(string data) {
 
     const size_t dataSize = data.size();
 
     string buffer;
     buffer.reserve(dataSize);
 
-    for (size_t pos = 0; pos != dataSize; ++pos) {
-        switch (data[pos]) {
+    for (char chr : data) {
+        switch (chr) {
             case '&':
                 buffer.append("&amp;");
                 break;
 
             case '\"':
-                buffer.append("&quot;");
+                buffer.append(QUOT);
                 break;
 
             case '\'':
@@ -69,7 +64,7 @@ string encode(string data) {
                 break;
 
             default:
-                buffer.append(&data[pos], 1);
+                buffer.append(&chr, 1);
                 break;
         }
     }
@@ -77,54 +72,51 @@ string encode(string data) {
     return buffer;
 }
 
-void searchReplace(string &data, const char *search, const char *replace) {
+string escapeQuot(string str) {
+    size_t idx;
+    size_t pos = 0;
 
-    const size_t dataSize = data.size();
-    const size_t searchSize = strlen(search);
-
-    string buffer;
-    buffer.reserve(dataSize);
-
-    for (size_t pos = 0; pos < dataSize; ++pos) {
-        if (pos + searchSize <= dataSize) {
-            size_t len = 0;
-
-            for (size_t j = 0; j < searchSize; ++j) {
-                if (data[pos + j] == search[j]) ++len;
-                else break;
-            }
-
-            if (len == searchSize) {
-                buffer.append(replace);
-                pos += len - 1;
-                continue;
-            }
-        }
-
-        buffer.append(&data[pos], 1);
+    while ((idx = str.find(QUOT, pos)) != string::npos) {
+        str.insert(idx, "\\");
+        pos = idx + sizeof(QUOT);
     }
 
-    data.swap(buffer);
+    return str;
 }
 
-string make_dir_element(const string name, string path, const string cmd) {
-    searchReplace(path, QUOT, EQUOT);
+struct DirContent {
+    vector <string> dirs;
+    vector <string> files;
+};
 
-    return
-        "<menu id=\"" + path + "\"" +
-        " label=\"" + name + "\"" +
-        " execute=\"" + cmd  + " " + QUOT + path + QUOT + "\"/>\n";
-}
+DirContent ReadDir(string mainDir) {
+    DirContent content;
 
-string make_file_element(const string name, string path, const string cmd) {
-    searchReplace(path, QUOT, EQUOT);
+    struct stat filestat;
+    const struct dirent *entry;
 
-    return
-        "<item label=\"" + name + "\">" +
-        "<action name=\"Execute\">" +
-        "<execute>" + cmd + " " + QUOT + path + QUOT + "</execute>" +
-        "</action>" +
-        "</item>\n";
+    DIR *dir;
+    if ((dir = opendir(mainDir.c_str())) == NULL) {
+        cerr << "opendir() error" << endl;
+        return content;
+    }
+
+    string filepath;
+    while ((entry = readdir(dir)) != NULL) {
+        if ((entry->d_name)[0] != '.') {                   // it's not an hidden file
+
+            filepath = mainDir + "/" + entry->d_name;
+            if (stat(filepath.c_str(), &filestat) != 0) continue;
+
+            if (S_ISDIR(filestat.st_mode))
+                content.dirs.push_back(string(entry->d_name));
+            else if S_ISREG(filestat.st_mode)
+                content.files.push_back(string(entry->d_name));
+        }
+    }
+
+    closedir(dir);
+    return content;
 }
 
 int main(int argc, char **argv) {
@@ -134,74 +126,33 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    const string programName(encode(argv[0]));
+    string dir(argv[1]);
+    DirContent content = ReadDir(dir);
+    string thisDir = xmlEscape(dir);
+    string qEscapedDir = escapeQuot(thisDir);
+    string escapedProgramName = xmlEscape(argv[0]);
 
-    const char *mainDir = argv[1];
-    char path[4096];
+    cout << "<openbox_pipe_menu><item label=\"Browse here...\">" <<
+         "<action name=\"Execute\"><execute>" << CMD << " " << QUOT << qEscapedDir << QUOT << "</execute></action>" <<
+         "</item><separator/>";
 
-    struct stat info;
-    const struct dirent *entry;
-
-    struct File {
-        const string name;
-        const string path;
-    };
-
-    vector <File> files;
-    vector <File> dirs;
-
-    DIR *dir;
-
-    if ((dir = opendir(mainDir)) == NULL) {
-        cerr << "opendir() error" << endl;
-        return 1;
+    sort(content.files.begin(), content.files.end());
+    for (string &name : content.files) {
+        string escapedName =  xmlEscape(name);
+        cout << "<item label=\"" << escapedName << "\">" <<
+             "<action name=\"Execute\">" <<
+             "<execute>" << CMD << " " << QUOT << qEscapedDir << "/" << escapeQuot(escapedName) << QUOT << "</execute>" <<
+             "</action>" <<
+             "</item>";
     }
 
-    while ((entry = readdir(dir)) != NULL) {
-        const char *fileName = entry->d_name;
-
-        if (fileName[0] != '.') {   // it's not an hidden file
-            sprintf(path, "%s/%s", mainDir, fileName);
-            string pathString(path);
-            string nameString(fileName);
-
-            if (stat(path, &info) != 0) {
-                // it's not readable
-            }
-            else if (S_ISDIR(info.st_mode)) {
-                dirs.push_back({nameString, pathString});
-            }
-            else {
-                files.push_back({nameString, pathString});
-            }
-        }
-    }
-
-    closedir(dir);
-
-    string thisPath(mainDir);
-    thisPath = encode(thisPath);
-    searchReplace(thisPath, QUOT, EQUOT);
-
-    cout << "<openbox_pipe_menu>"
-         << "<item label=\"Browse here...\"><action name=\"Execute\">"
-         << "<execute>" << CMD << " " << QUOT << thisPath << QUOT << "</execute>"
-         << "</action></item><separator/>\n";
-
-    for (const File file : files) {
-        cout << make_file_element(
-                 encode(file.name),
-                 encode(file.path),
-                 CMD
-             );
-    }
-
-    for (const File directory : dirs) {
-        cout << make_dir_element(
-                 encode(directory.name),
-                 encode(directory.path),
-                 programName
-             );
+    sort(content.dirs.begin(), content.dirs.end());
+    for (string &name : content.dirs) {
+        string escapedName =  xmlEscape(name);
+        cout << "<menu id=\"" << thisDir << "/" << escapedName << "\"" <<
+             " label=\"" << escapedName << "\"" <<
+             " execute=\"" << escapedProgramName << " " << QUOT << qEscapedDir << "/" << escapeQuot(escapedName) << QUOT <<
+             "\"/>";
     }
 
     cout << "</openbox_pipe_menu>\n";
