@@ -36,10 +36,8 @@ using namespace std;
 
 string xmlEscape(string data) {
 
-    const size_t dataSize = data.size();
-
     string buffer;
-    buffer.reserve(dataSize);
+    buffer.reserve(data.size());
 
     for (char chr : data) {
         switch (chr) {
