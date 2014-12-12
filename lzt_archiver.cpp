@@ -48,13 +48,11 @@ void compress(string text, ofstream &fout) {
     map <size_t, size_t[2]> dict;
     size_t length = text.size();
 
-    size_t lim_j;
     for (size_t i = length / 2 ; i >= MIN; i--) {
-        lim_j = length - i * 2;
-        for (size_t j = 0; j <= lim_j; j++) {
+        for (size_t j = length - i * 2; j > 0; j--) {
             size_t pos = text.find(text.substr(j, i), j + i);
             if (pos != string::npos) {
-                if ((dict.find(pos) == dict.end()) || (i > dict[pos][1])) {
+                if (dict.find(pos) == dict.end() || i > dict[pos][1]) {
                     dict[pos][0] = j;
                     dict[pos][1] = i;
                 }
