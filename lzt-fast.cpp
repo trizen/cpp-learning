@@ -39,7 +39,7 @@ void lzt_compress(string str) {
     int total = 0;          // the total number of compressed bytes
 
     const int min = 4;     // the minimum length of a substring
-    const int max = 30;    // the maximum length of a substring
+    const int max = 15;    // the maximum length of a substring
 
     int k = 0;       // minimum pointer (must be zero)
     int i = 0;       // iterator (0 to length(str)-1)
@@ -49,7 +49,7 @@ void lzt_compress(string str) {
 
     vector <string> dups;             // array of duplicated substrings with positions
     vector <string> cache;            // cache of substrings
-    cache.reserve(str.size());        // reserve some memory
+    //cache.reserve(str.size());        // reserve some memory
 
     map <string, int> dict;           // dictionary of substrings
 
@@ -90,18 +90,19 @@ void lzt_compress(string str) {
             memo += string{c};
         }
 
-        if ((i - k) >= max) {
-            ++k;        // update the minimum length
-        }
-
         // Increment the iterator
         ++i;
 
         // Create the dictionary from the cache of substrings
         for (auto item : cache) {
             if (dict.find(item) == dict.end()) {
-                dict[item] = i - k - item.size();
+                dict[item] = i - item.size();
             }
+        }
+
+        // Update the minimum length
+        if ((i - k) >= max) {
+            ++k;
         }
     }
 
