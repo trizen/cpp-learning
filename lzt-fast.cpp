@@ -41,8 +41,8 @@ void lzt_compress(string str) {
     const int min = 4;     // the minimum length of a substring
     const int max = 15;    // the maximum length of a substring
 
-    int k = 0;       // minimum pointer (must be zero)
-    int i = 0;       // iterator (0 to length(str)-1)
+    size_t k = 0;       // minimum pointer (must be zero)
+    size_t i = 0;       // iterator (0 to length(str)-1)
 
     int remember = false;   // remember mode
     string memo  = "";      // short-term memory
@@ -61,7 +61,7 @@ void lzt_compress(string str) {
         }
 
         // Create and cache substrings (needs to be optimized or replaced)
-        for (int p = k; p <= i; ++p) {
+        for (size_t p = k; p <= i; ++p) {
             if (cache.size() > p) {
                 cache[p] += string{c};
             }
