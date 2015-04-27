@@ -22,10 +22,11 @@
 
     Date: 12.10.2014 18:33:59 EEST
     License: GPLv3
+    Blog: http://trizenx.blogspot.ro/2014/05/lz-compression.html
     Website: http://github.com/trizen
 
     Compilation:
-        g++ -std=c++11 -march=native -Ofast -o lzt lzt_archiver.cpp
+        g++ -std=c++11 -march=native -Ofast -o lzt lzt-simple.cpp
 
     Usage:
         ./lzt [input] [output]
@@ -49,7 +50,8 @@ void compress(string text, ofstream &fout) {
     size_t length = text.size();
 
     for (size_t i = length / 2 ; i >= MIN; i--) {
-        for (size_t j = length - i * 2; j > 0; j--) {
+        //for (size_t j = length - i * 2; j > 0; j--) {
+        for (size_t j = 0; j <= length - i * 2; j++) {
             size_t pos = text.find(text.substr(j, i), j + i);
             if (pos != string::npos) {
                 if (dict.find(pos) == dict.end() || i > dict[pos][1]) {
@@ -60,25 +62,29 @@ void compress(string text, ofstream &fout) {
         }
     }
 
+    size_t last_pos = 0;
     string uncompressed = "";
     vector <array<size_t, 3>> pairs;
 
-    for (size_t i = 0 ; i < length ; i++) {
+    for (size_t i = 0 ; i < length ; i++, last_pos++) {
         if (dict.find(i) != dict.end()) {
             size_t vlen = dict[i][1];
-            pairs.push_back(array<size_t, 3> {i, dict[i][0], vlen});
+            pairs.push_back(array<size_t, 3> {last_pos, dict[i][0], vlen});
             i += vlen - 1;
+            last_pos = 0;
         }
-        else
+        else {
             uncompressed += text[i];
+        }
     }
 
     size_t ulength = uncompressed.size();
     fout << static_cast<char>(ulength - 1) << static_cast<char>(pairs.size());
 
     for (auto arr : pairs) {
-        for (auto item : arr)
+        for (auto item : arr) {
             fout << static_cast<char>(item);
+        }
     }
 
     fout << uncompressed;
@@ -89,10 +95,12 @@ int main(int argc, char **argv) {
     string input, output;
     if (argc > 1) {
         input = argv[1];
-        if (argc > 2)
+        if (argc > 2) {
             output = argv[2];
-        else
+        }
+        else {
             output = input + ".lzt";
+        }
     }
     else {
         cerr << "usage: " << argv[0] << " input [output]" << endl;
