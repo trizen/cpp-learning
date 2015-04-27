@@ -8,7 +8,7 @@
 // A very good and very slow compression algorithm. (concept only)
 
 // Compilation:
-//  g++ -march=native -Ofast -std=c++11 lzt-fast.cpp -o lzt-fast
+//  g++ -march=native -Ofast -std=c++11 lzt-slow.cpp -o lzt-slow
 
 #include <map>
 #include <vector>
