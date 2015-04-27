@@ -1,21 +1,18 @@
 /*
     Author: Daniel "Trizen" Șuteu
     License: GPLv3
-    Date: 26 April 2015
+    Date: 27 April 2015
     Website: http://github.com/trizen
 */
 
 // A very good and very fast compression algorithm. (concept only)
 
 // Compilation:
-//  g++ -march=native -Ofast -std=c++11 lzt-fast.cpp -o lzt-fast
+//  g++ -march=native -Ofast -std=c++11 lzt-fast2.cpp -o lzt-fast
 
-#include <map>
-#include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <streambuf>
 
 using namespace std;
 
@@ -34,88 +31,67 @@ string slurp(string filename) {
     return str;
 }
 
-void lzt_compress(string str) {
+void lzt_dict(string str) {
 
     int total = 0;          // the total number of compressed bytes
 
-    const int min = 4;     // the minimum length of a substring
-    const int max = 15;    // the maximum length of a substring
+    const size_t limit = str.size();
+    const size_t min = 4;
+    const size_t max = limit / 2;
 
-    size_t k = 0;       // minimum pointer (must be zero)
-    size_t i = 0;       // iterator (0 to length(str)-1)
+    size_t cur_pos = min;
+    size_t old_pos = 0;
+    size_t old_n   = 0;
 
-    int remember = false;   // remember mode
-    string memo  = "";      // short-term memory
+    while (cur_pos < limit) {
 
-    vector <string> dups;             // array of duplicated substrings with positions
-    vector <string> cache;            // cache of substrings
-    //cache.reserve(str.size());        // reserve some memory
+        size_t n   = 2;
+        size_t pos = 0;
 
-    map <string, int> dict;           // dictionary of substrings
+        bool matched = false;
+        for (; pos != old_pos + 1 && cur_pos + n <= limit && n <= max; n++) {
+            size_t p = str.substr(0, cur_pos).find(str.substr(cur_pos, n), pos);
 
-    for (auto c : str) {
-
-        // Start remembering if the current characters exists in the dictionary
-        if (!remember && dict.find(string{c}) != dict.end()) {
-            remember = true;    // activate the remember mode
-        }
-
-        // Create and cache substrings (needs to be optimized or replaced)
-        for (size_t p = k; p <= i; ++p) {
-            if (cache.size() > p) {
-                cache[p] += string{c};
-            }
-            else {
-                cache.push_back(string{c});
-            }
-        }
-
-        // If remember mode is one, do some checks.
-        if (remember) {
-
-            // If it doesn't exists, then the $memo is the largest
-            // duplicated substring in the dictionary at this point.
-            if (dict.find(memo + string{c}) == dict.end()) {
-                remember = false;              // turn-off remember mode
-                if (memo.size() >= min) {      // check for the minimum length of the word
-                    cout << "[" << dict[memo] << ", " << memo.size() << ", " << memo << ", " << (i - memo.size()) << "]" << endl;
-                    total += memo.size();
-                }
-
-                // `memo` has been stored. Now, clear the memory.
-                memo = "";
+            if (p == string::npos) {
+                break;
             }
 
-            // Remember one more character
-            memo += string{c};
-        }
-
-        // Increment the iterator
-        ++i;
-
-        // Create the dictionary from the cache of substrings
-        for (auto item : cache) {
-            if (dict.find(item) == dict.end()) {
-                dict[item] = i - item.size();
+            if (!matched && n > min) {
+                matched = true;
             }
+            pos = p;
         }
 
-        // Update the minimum length
-        if ((i - k) >= max) {
-            ++k;
+        if (pos == old_pos + 1) {
+            cur_pos += old_n;
         }
+        else {
+            if (matched) {
+                cout << "["
+                     << cur_pos << ", "
+                     << pos << ", "
+                     << n - 1 << ", "
+                     << str.substr(cur_pos, n - 1)
+                     << "]" << endl;
+                total += n - 1;
+            }
+            cur_pos += 1;
+        }
+
+        old_pos = pos;
+        old_n   = n - 2;
     }
 
-    cout << "** Saved " << total << " bytes from a total of " << str.size() << " (" << ((float)(total) / (float)(str.size()) * 100.0) << "%)." << endl;
+    cout << "** Saved " << total << " bytes from a total of " << limit << " (" << ((float)(total) / (float)(limit) * 100.0) << "%)." << endl;
 }
 
 int main(int argc, char **argv) {
     if (argc > 1) {
         string content = slurp(string{argv[1]});
-        lzt_compress(content);
+        lzt_dict(content);
     }
     else {
-        lzt_compress("TOBEORNOTTOBEORTOBEORNOT#");
+        lzt_dict("TOBEORNOTTOBEORTOBEORNOT#");
     }
     return 0;
 }

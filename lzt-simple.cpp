@@ -22,8 +22,8 @@
 
     Date: 12.10.2014 18:33:59 EEST
     License: GPLv3
-    Blog: http://trizenx.blogspot.ro/2014/05/lz-compression.html
     Website: http://github.com/trizen
+    Blog: http://trizenx.blogspot.ro/2014/05/lz-compression.html
 
     Compilation:
         g++ -std=c++11 -march=native -Ofast -o lzt lzt-simple.cpp
