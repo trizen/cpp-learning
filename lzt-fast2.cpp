@@ -64,7 +64,7 @@ void lzt_dict(string str) {
             cout << "["
                  << cur_pos << ", "
                  << pos << ", "
-                 << n - 1 << ", "
+                 << n << ", "
                  << str.substr(cur_pos, n)
                  << "]" << endl;
             total += n - 1;

@@ -62,15 +62,17 @@ int main(int argc, char **argv) {
     int year = now->tm_year + 1900;
 
     // Check for leap years
-    if (year % 400 == 0 || (year % 4 == 0 && (year % 100 != 0)))
+    if (year % 400 == 0 || (year % 4 == 0 && (year % 100 != 0))) {
         mons[2] = 29;
+    }
 
     // Compute the magic number
     year--;
     int st = 1 + year * 365 + year / 4 - year / 100 + year / 400;
 
-    for (int i = 1; i < mon; i++)
+    for (int i = 1; i < mon; i++) {
         st += mons[i];
+    }
 
     // Name of the current month
     char buffer[32];
@@ -82,15 +84,16 @@ int main(int argc, char **argv) {
     sprintf(monYear, "%s %d", buffer, year + 1);
 
     // Calendar header
-    printf("%*s\n%s\n", (monName.size() + 5) / 2 + 11, monYear, "Su Mo Tu We Th Fr Sa");
+    printf("%*s\n%s\n", (monName.size() + 20 + 5) / 2, monYear, "Su Mo Tu We Th Fr Sa");
 
-    for (int i = 0; i < st % 7; i++)
+    for (int i = 0; i < st % 7; i++) {
         cout << "   ";
+    }
 
     // Printing the days of the month
     for (int i = 1; i <= mons[mon]; i++) {
         printf(i == day ? "\e[7m%2d\e[0m " : "%2d ", i);
-        (st + i) % 7 == 0 && i != mons[mon] && cout << endl;
+        (st + i) % 7 == 0 && i != mons[mon] &&cout << endl;
     }
 
     cout << endl;
