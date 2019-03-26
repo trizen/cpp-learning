@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
     auto end_of_fib = is_fib.end();
     auto end_of_seen = seen.end();
 
-    for (int n = 1; n < 30000 ; ++n) {
+    for (int n = 1; n < 3000 ; ++n) {
 
         vector <int> t;
         vector <int> fibs;
@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 
             int v = row[j] + row[j + 1];
 
-            if ((v == 1) || (is_fib.find(v) != end_of_fib)) {
+            if ((v == 1) || (v == 2) || (v == 3) || (v == 5) || (is_fib.find(v) != end_of_fib)) {
 
                 if (seen.find(v) == end_of_seen) {
                     seen.insert(v);
