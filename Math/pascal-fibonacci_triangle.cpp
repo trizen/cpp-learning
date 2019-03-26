@@ -23,8 +23,6 @@ int main(int argc, char **argv) {
     set <int> is_fib;
     set <int> seen;
 
-    is_fib.insert(0);
-    is_fib.insert(1);
     is_fib.insert(1);
     is_fib.insert(2);
     is_fib.insert(3);
