@@ -20,32 +20,10 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    set <int> is_fib;
     set <int> seen;
+    set <int> is_fib = {1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946};
 
-    is_fib.insert(1);
-    is_fib.insert(2);
-    is_fib.insert(3);
-    is_fib.insert(5);
-    is_fib.insert(8);
-    is_fib.insert(13);
-    is_fib.insert(21);
-    is_fib.insert(34);
-    is_fib.insert(55);
-    is_fib.insert(89);
-    is_fib.insert(144);
-    is_fib.insert(233);
-    is_fib.insert(377);
-    is_fib.insert(610);
-    is_fib.insert(987);
-    is_fib.insert(1597);
-    is_fib.insert(2584);
-    is_fib.insert(4181);
-    is_fib.insert(6765);
-    is_fib.insert(10946);
-
-    vector <int> row;
-    row.push_back(1);
+    vector <int> row = {1};
 
     auto end_of_fib = is_fib.end();
     auto end_of_seen = seen.end();
