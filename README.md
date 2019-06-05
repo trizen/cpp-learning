@@ -15,6 +15,7 @@ Simple C++ programs used in learning this complex language.
 * File
     * [Fsfn](./File/fsfn.cpp)
 * Math
+    * [Chernick-carmichael numbers](./Math/chernick-carmichael_numbers.cpp)
     * [Long division](./Math/long_division.cpp)
     * [Pascal-fibonacci triangle](./Math/pascal-fibonacci_triangle.cpp)
 * Time
