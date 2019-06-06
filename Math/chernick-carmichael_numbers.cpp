@@ -20,12 +20,14 @@
 
 using namespace std;
 
-bool probprime(unsigned long long int k, mpz_t n) {
+typedef unsigned long long int u64;
+
+bool probprime(u64 k, mpz_t n) {
     mpz_set_ui(n, k);
     return mpz_probab_prime_p(n, 0);
 }
 
-bool is_chernick(int n,  unsigned long long int m, mpz_t z) {
+bool is_chernick(int n, u64 m, mpz_t z) {
 
     if (!probprime(6 * m + 1, z)) {
         return false;
@@ -35,8 +37,14 @@ bool is_chernick(int n,  unsigned long long int m, mpz_t z) {
         return false;
     }
 
-    for (unsigned long long int i = n - 2; i > 0; i--) {
-        if (!probprime((1 << i) * 9 * m + 1, z)) {
+    if (!probprime(18 * m + 1, z)) {
+        return false;
+    }
+
+    u64 t = 9 * m;
+
+    for (int i = 2; i <= n - 2; i++) {
+        if (!probprime((t << i) + 1, z)) {
             return false;
         }
     }
@@ -51,14 +59,15 @@ int main() {
 
     for (int n = 3; n <= 9; n++) {
 
-        unsigned long long int multiplier = (n <= 4) ? 1 : (1 << (n - 4));
+        // `m` must be divisible by 2^(n-4), for n > 4
+        u64 multiplier = (n > 4) ? (1 << (n - 4)) : 1;
 
+        // Optimization for n > 5
         if (n > 5) {
             multiplier *= 5;
         }
 
-        for (unsigned long long int k = 1; ; k++) {
-
+        for (u64 k = 1; ; k++) {
             if (is_chernick(n, k * multiplier, z)) {
                 cout << "a(" << n << ") has m = " << (k * multiplier) << endl;
                 break;
