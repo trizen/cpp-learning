@@ -22,14 +22,12 @@ using namespace std;
 
 typedef unsigned long long int u64;
 
-bool primality_pretest(u64 k) {     // for odd k
+bool primality_pretest(u64 k) {     // for k > 23
 
-    if ((k == 3) || (k == 5) || (k == 7) || (k == 11) || (k == 13) || (k == 17) || (k == 19) || (k == 23)) {
-        return true;
-    }
-
-    if (!(k % 3) || !(k % 5) || !(k % 7) || !(k % 11) || !(k % 13) || !(k % 17) || !(k % 19) || !(k % 23)) {
-        return false;
+    if (!(k %  3) || !(k %  5) || !(k %  7) || !(k % 11) ||
+        !(k % 13) || !(k % 17) || !(k % 19) || !(k % 23)
+    ) {
+        return (k <= 23);
     }
 
     return true;
@@ -88,12 +86,12 @@ int main() {
     mpz_t z;
     mpz_inits(z, NULL);
 
-    for (int n = 3; n <= 9; n++) {
+    for (int n = 3; n <= 10; n++) {
 
-        // `m` must be divisible by 2^(n-4), for n > 4
+        // `m` is a multiple of 2^(n-4), for n > 4
         u64 multiplier = (n > 4) ? (1 << (n - 4)) : 1;
 
-        // Optimization for n > 5
+        // For n > 5, m is also a multiple of 5
         if (n > 5) {
             multiplier *= 5;
         }
