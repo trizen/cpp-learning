@@ -22,12 +22,45 @@ using namespace std;
 
 typedef unsigned long long int u64;
 
+bool primality_pretest(u64 k) {     // for odd k
+
+    if ((k == 3) || (k == 5) || (k == 7) || (k == 11) || (k == 13) || (k == 17) || (k == 19) || (k == 23)) {
+        return true;
+    }
+
+    if (!(k % 3) || !(k % 5) || !(k % 7) || !(k % 11) || !(k % 13) || !(k % 17) || !(k % 19) || !(k % 23)) {
+        return false;
+    }
+
+    return true;
+}
+
 bool probprime(u64 k, mpz_t n) {
     mpz_set_ui(n, k);
     return mpz_probab_prime_p(n, 0);
 }
 
 bool is_chernick(int n, u64 m, mpz_t z) {
+
+    if (!primality_pretest(6 * m + 1)) {
+        return false;
+    }
+
+    if (!primality_pretest(12 * m + 1)) {
+        return false;
+    }
+
+    if (!primality_pretest(18 * m + 1)) {
+        return false;
+    }
+
+    u64 t = 9 * m;
+
+    for (int i = 2; i <= n - 2; i++) {
+        if (!primality_pretest((t << i) + 1)) {
+            return false;
+        }
+    }
 
     if (!probprime(6 * m + 1, z)) {
         return false;
@@ -40,8 +73,6 @@ bool is_chernick(int n, u64 m, mpz_t z) {
     if (!probprime(18 * m + 1, z)) {
         return false;
     }
-
-    u64 t = 9 * m;
 
     for (int i = 2; i <= n - 2; i++) {
         if (!probprime((t << i) + 1, z)) {
@@ -68,8 +99,11 @@ int main() {
         }
 
         for (u64 k = 1; ; k++) {
-            if (is_chernick(n, k * multiplier, z)) {
-                cout << "a(" << n << ") has m = " << (k * multiplier) << endl;
+
+            u64 m = k * multiplier;
+
+            if (is_chernick(n, m, z)) {
+                cout << "a(" << n << ") has m = " << m << endl;
                 break;
             }
         }
