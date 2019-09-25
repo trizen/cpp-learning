@@ -17,6 +17,7 @@ Simple C++ programs used in learning this complex language.
 * Math
     * [Chernick-carmichael numbers](./Math/chernick-carmichael_numbers.cpp)
     * [Continued fraction sqrt period](./Math/continued_fraction_sqrt_period.cpp)
+    * [Continued fraction sqrt period length mpz](./Math/continued_fraction_sqrt_period_length_mpz.cpp)
     * [Long division](./Math/long_division.cpp)
     * [Pascal-fibonacci triangle](./Math/pascal-fibonacci_triangle.cpp)
 * Time
