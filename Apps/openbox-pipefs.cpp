@@ -26,8 +26,10 @@
 
 #include <iostream>
 #include <dirent.h>
+#include <string>
 #include <sys/stat.h>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 

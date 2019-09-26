@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
     sprintf(monYear, "%s %d", buffer, year + 1);
 
     // Calendar header
-    printf("%*s\n%s\n", (monName.size() + 20 + 5) / 2, monYear, "Su Mo Tu We Th Fr Sa");
+    printf("%*s\n%s\n", (int)((monName.size() + 20 + 5) >> 1), monYear, "Su Mo Tu We Th Fr Sa");
 
     for (int i = 0; i < st % 7; i++) {
         cout << "   ";

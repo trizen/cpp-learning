@@ -24,7 +24,8 @@ typedef unsigned long long int u64;
 
 bool primality_pretest(u64 k) {     // for k > 23
 
-    if (!(k %  3) || !(k %  5) || !(k %  7) || !(k % 11) ||
+    if (
+        !(k %  3) || !(k %  5) || !(k %  7) || !(k % 11) ||
         !(k % 13) || !(k % 17) || !(k % 19) || !(k % 23)
     ) {
         return (k <= 23);
