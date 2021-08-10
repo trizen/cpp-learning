@@ -12,6 +12,7 @@ Simple C++ programs used in learning this complex language.
     * [Lzt-fast2](./Encoding/lzt-fast2.cpp)
     * [Lzt-simple](./Encoding/lzt-simple.cpp)
     * [Lzt-slow](./Encoding/lzt-slow.cpp)
+    * [Rc4.c](./Encoding/rc4.c)
 * File
     * [Fsfn](./File/fsfn.cpp)
 * Math
